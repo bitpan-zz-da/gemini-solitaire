@@ -44,10 +44,10 @@ const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, onCardClic
 
   const pileStyle: React.CSSProperties = {
     position: 'relative',
-    width: '80px',
-    height: '120px',
-    border: `2px solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`,
-    borderRadius: '8px',
+    width: '100%', // Fill parent container
+    height: '100%', // Fill parent container
+    border: `0.1em solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`, // Responsive border
+    borderRadius: '0.5em', // Responsive border-radius
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',

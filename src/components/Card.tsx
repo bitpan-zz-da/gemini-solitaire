@@ -26,24 +26,24 @@ const Card: React.FC<CardProps> = ({ card, position, onClick, canDrag = true, cu
 
   const cardStyle: React.CSSProperties = {
     position: 'absolute',
-    width: '80px',
-    height: '120px',
-    border: '1px solid #333',
-    borderRadius: '8px',
+    width: '100%', // Fill parent container
+    height: '100%', // Fill parent container
+    border: '0.1em solid #333', // Responsive border relative to font-size
+    borderRadius: '0.5em', // Responsive border-radius relative to font-size
     backgroundColor: card.isFaceUp ? 'white' : cardBackTheme.style.backgroundColor,
     color: card.color === CardColor.Red ? 'red' : 'black',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '5px',
-    fontSize: '1.2em',
+    padding: '0.3em', // Responsive padding relative to font-size
+    fontSize: '1em', // Base font size, inner elements will use em
     fontWeight: 'bold',
     cursor: canDrag && card.isFaceUp ? 'grab' : 'default',
-    left: `${position[0]}px`,
-    top: `${position[1]}px`,
+    left: `${position[0]}px`, // Still px for internal stacking
+    top: `${position[1]}vw`, // Now vw for responsive vertical stacking
     zIndex: position[2],
-    boxShadow: '2px 2px 5px rgba(0,0,0,0.3)',
+    boxShadow: '0.2em 0.2em 0.5em rgba(0,0,0,0.3)', // Responsive shadow relative to font-size
     opacity: isDragging ? 0.5 : 1,
   };
 
@@ -62,9 +62,9 @@ const Card: React.FC<CardProps> = ({ card, position, onClick, canDrag = true, cu
     <div ref={drag} style={cardStyle} onClick={() => onClick && onClick(card)}>
       {card.isFaceUp ? (
         <>
-          <div style={{ position: 'absolute', top: '5px', left: '5px', fontSize: '0.5em', lineHeight: '1' }}>{card.rank}<br/>{getSuitSymbol(card.suit)}</div>
+          <div style={{ position: 'absolute', top: '0.5em', left: '0.5em', fontSize: '0.5em', lineHeight: '1' }}>{card.rank}<br/>{getSuitSymbol(card.suit)}</div>
           <div style={{ fontSize: '1em', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>{getSuitSymbol(card.suit)}</div>
-          <div style={{ position: 'absolute', bottom: '5px', right: '5px', fontSize: '0.5em', lineHeight: '1', transform: 'rotate(180deg)' }}>{card.rank}<br/>{getSuitSymbol(card.suit)}</div>
+          <div style={{ position: 'absolute', bottom: '0.5em', right: '0.5em', fontSize: '0.5em', lineHeight: '1', transform: 'rotate(180deg)' }}>{card.rank}<br/>{getSuitSymbol(card.suit)}</div>
         </>
       ) : (
         <div style={cardBackStyle}>

@@ -39,11 +39,11 @@ const TableauPile: React.FC<TableauPileProps> = ({ cards, onCardClick, pileIndex
 
   const pileStyle: React.CSSProperties = {
     position: 'relative',
-    width: '80px',
-    minHeight: '120px', // Allow pile to grow
-    border: `2px solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`,
-    borderRadius: '8px',
-    paddingTop: '5px',
+    width: '100%', // Fill parent container
+    minHeight: '100%', // Fill parent container
+    border: `0.1em solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`, // Responsive border
+    borderRadius: '0.5em', // Responsive border-radius
+    paddingTop: '0.3em', // Responsive paddingTop
     backgroundColor: isOver && canDrop ? 'rgba(0,255,0,0.1)' : '#333',
     alignSelf: 'start',
     ...style, // Merge passed style prop
@@ -56,7 +56,7 @@ const TableauPile: React.FC<TableauPileProps> = ({ cards, onCardClick, pileIndex
         <Card
           key={card.id}
           card={card}
-          position={[0, index * 20, index + 1]} // Overlap cards vertically
+          position={[0, index * 1.5, index + 1]} // Overlap cards vertically (responsive multiplier)
           onClick={(clickedCard) => onCardClick(clickedCard, index)}
           currentPileType={PileType.Tableau}
           currentPileIndex={pileIndex}

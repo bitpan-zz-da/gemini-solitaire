@@ -131,11 +131,13 @@ function App() {
           <button onClick={startGame} style={{ padding: '6px 12px', fontSize: '0.8em', marginBottom: '10px' }}>New Game</button>
           <div className="game-board">
           {/* Stock Pile */}
-          <StockPile onDraw={drawCard} style={{ gridColumn: '1 / 2', gridRow: '1 / 2' }} />
+          <div className="card-container" style={{ gridColumn: '1 / 2', gridRow: '1 / 2' }}>
+            <StockPile onDraw={drawCard} />
+          </div>
 
           {/* Waste Pile */}
           {waste.length > 0 && (
-            <div style={{ gridColumn: '2 / 3', gridRow: '1 / 2', position: 'relative' }}>
+            <div className="card-container" style={{ gridColumn: '2 / 3', gridRow: '1 / 2', position: 'relative' }}>
               <Card
                 card={{ ...waste[waste.length - 1], isFaceUp: true }}
                 position={[0, 0, 1]} // Relative position within its grid cell
@@ -151,26 +153,28 @@ function App() {
           {Object.values(Suit).map((suit, index) => {
             const foundationCards = foundations[suit];
             return (
-              <FoundationPile
-                key={suit}
-                suit={suit}
-                cards={foundationCards}
-                style={{ gridColumn: `${4 + index} / ${5 + index}`, gridRow: '1 / 2' }}
-                onCardClick={(card) => handleCardClick(card, PileType.Foundation, suit, foundationCards.length - 1)}
-              />
+              <div className="card-container" style={{ gridColumn: `${4 + index} / ${5 + index}`, gridRow: '1 / 2' }}>
+                <FoundationPile
+                  key={suit}
+                  suit={suit}
+                  cards={foundationCards}
+                  onCardClick={(card) => handleCardClick(card, PileType.Foundation, suit, foundationCards.length - 1)}
+                />
+              </div>
             );
           })}
 
           {/* Tableau Piles */}
                   {tableaus.map((pile, index) => {
                     return (
-                      <TableauPile
-                        key={index}
-                        cards={pile}
-                        style={{ gridColumn: `${index + 1} / ${index + 2}`, gridRow: '2 / 3' }}
-                        onCardClick={(card, cardIndex) => handleCardClick(card, PileType.Tableau, index, cardIndex)}
-                        pileIndex={index}
-                      />
+                      <div className="card-container" style={{ gridColumn: `${index + 1} / ${index + 2}`, gridRow: '2 / 3' }}>
+                        <TableauPile
+                          key={index}
+                          cards={pile}
+                          onCardClick={(card, cardIndex) => handleCardClick(card, PileType.Tableau, index, cardIndex)}
+                          pileIndex={index}
+                        />
+                      </div>
                     );
                   })}        
           </div>

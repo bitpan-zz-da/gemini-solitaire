@@ -13,18 +13,52 @@
 
 .game-board {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 columns for piles */
-  grid-template-rows: 1fr 2fr; /* Top row for stock/waste/foundations, bottom for tableaus */
-  gap: 10px;
-  max-width: 900px; /* Max width for larger screens */
-  width: 95%; /* Responsive width */
-  aspect-ratio: 1.5 / 1; /* Maintain aspect ratio */
+  grid-template-columns: repeat(7, 1fr); /* Default for larger screens */
+  grid-template-rows: 1fr 2fr;
+  gap: 1vw;
+  max-width: 900px;
+  width: 95%;
+  aspect-ratio: 1.5 / 1;
   border: 2px solid #61dafb;
   border-radius: 10px;
   background-color: #1a1a1a;
   margin-top: 20px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-  padding: 10px; /* Add some padding inside the board */
+  padding: 1vw;
+}
+
+@media (max-width: 768px) {
+  .game-board {
+    grid-template-columns: repeat(7, minmax(60px, 1fr)); /* Allow smaller columns, but with a min-width */
+    grid-template-rows: auto 1fr; /* Top row auto, tableau row takes remaining space */
+    gap: 0.5vw;
+    width: 98%;
+    padding: 0.5vw;
+    overflow-x: auto; /* Enable horizontal scrolling for the game board itself */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+
+  /* Ensure card containers don't stretch vertically in the tableau row */
+  .game-board > .card-container {
+    align-self: start;
+  }
+
+  /* Adjust card size for mobile */
+  .game-board .card-container {
+    width: 12vw;
+    height: 18vw;
+  }
+  .game-board .card-container .card-content {
+    font-size: 0.7em;
+  }
+
+  /* Specific adjustments for top row piles */
+  .game-board > .card-container:nth-child(1), /* Stock Pile */
+  .game-board > .card-container:nth-child(2), /* Waste Pile */
+  .game-board > .card-container:nth-child(3), /* Foundation 1 */
+  .game-board > .card-container:nth-child(4) { /* Foundation 2 */
+    grid-column: span 1;
+  }
 }
 
 .game-status {
