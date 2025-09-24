@@ -5,14 +5,13 @@ import { Card as CardType, PileType, Suit, Rank } from './game/types'
 import { canPlaceCardOnFoundation, canPlaceCardOnTableau } from './game/rules'
 import Card from './components/Card'
 
-import StockPile from './components/StockPile'
-import WastePile from './components/WastePile'
-import FoundationPile from './components/FoundationPile'
+import StockPile from './components/StockPile';
+import FoundationPile from './components/FoundationPile';
 import TableauPile from './components/TableauPile'
 import Themes from './components/Themes'
 
 function App() {
-  const { startGame, stock, waste, tableaus, foundations, drawCard, makeMove, solveGame } = useGameStore();
+  const { startGame, stock, waste, tableaus, foundations, drawCard, solveGame } = useGameStore();
 
   useEffect(() => {
     startGame();
@@ -132,30 +131,31 @@ function App() {
           <button onClick={startGame} style={{ padding: '6px 12px', fontSize: '0.8em', marginBottom: '10px' }}>New Game</button>
           <div className="game-board">
           {/* Stock Pile */}
-          <StockPile cards={stock} position={[50, 50, 0]} onDraw={drawCard} />
+          <StockPile onDraw={drawCard} style={{ gridColumn: '1 / 2', gridRow: '1 / 2' }} />
 
           {/* Waste Pile */}
           {waste.length > 0 && (
-            <Card
-              card={{ ...waste[waste.length - 1], isFaceUp: true }}
-              position={[150, 50, 1]} // Position for the top card of waste
-              onClick={(card) => handleCardClick(card, PileType.Waste, null, waste.length - 1)}
-              currentPileType={PileType.Waste}
-              currentPileIndex={null}
-              cardIndexInPile={waste.length - 1}
-            />
+            <div style={{ gridColumn: '2 / 3', gridRow: '1 / 2', position: 'relative' }}>
+              <Card
+                card={{ ...waste[waste.length - 1], isFaceUp: true }}
+                position={[0, 0, 1]} // Relative position within its grid cell
+                onClick={(card) => handleCardClick(card, PileType.Waste, null, waste.length - 1)}
+                currentPileType={PileType.Waste}
+                currentPileIndex={null}
+                cardIndexInPile={waste.length - 1}
+              />
+            </div>
           )}
 
           {/* Foundation Piles */}
           {Object.values(Suit).map((suit, index) => {
             const foundationCards = foundations[suit];
-            const topCard = foundationCards.length > 0 ? foundationCards[foundationCards.length - 1] : null;
             return (
               <FoundationPile
                 key={suit}
                 suit={suit}
                 cards={foundationCards}
-                position={[450 + index * 100, 50, 0]}
+                style={{ gridColumn: `${4 + index} / ${5 + index}`, gridRow: '1 / 2' }}
                 onCardClick={(card) => handleCardClick(card, PileType.Foundation, suit, foundationCards.length - 1)}
               />
             );
@@ -167,14 +167,14 @@ function App() {
                       <TableauPile
                         key={index}
                         cards={pile}
-                        position={[50 + index * 100, 200, 0]}
+                        style={{ gridColumn: `${index + 1} / ${index + 2}`, gridRow: '2 / 3' }}
                         onCardClick={(card, cardIndex) => handleCardClick(card, PileType.Tableau, index, cardIndex)}
                         pileIndex={index}
                       />
                     );
                   })}        
-            <button onClick={solveGame} style={{ position: 'absolute', bottom: '10px', right: '10px', padding: '8px 15px', fontSize: '0.9em' }}>Solve It</button>
           </div>
+          <button onClick={solveGame} style={{ marginTop: '10px', padding: '8px 15px', fontSize: '0.9em' }}>Solve It</button>
         </div>
       ) : (
         <p>Loading game...</p>

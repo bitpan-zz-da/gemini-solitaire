@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card as CardType, Suit, PileType, Rank } from '../game/types';
+import { Card as CardType, Suit, PileType } from '../game/types';
 import Card from './Card';
 import { useDrop } from 'react-dnd';
 import { useGameStore } from '../game/store';
@@ -8,20 +8,17 @@ import { canPlaceCardOnFoundation } from '../game/rules';
 interface FoundationPileProps {
   suit: Suit;
   cards: CardType[];
-  position: [number, number, number];
   onCardClick: (card: CardType) => void;
+  style?: React.CSSProperties;
 }
 
-const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, position, onCardClick }) => {
+const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, onCardClick, style }) => {
   const { makeMove } = useGameStore();
 
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
+  const [{ isOver, canDrop }, drop]: [any, any] = useDrop(() => ({
     accept: 'CARD',
     drop: (item: { card: CardType; currentPileType: PileType; currentPileIndex: number | Suit | null; cardIndexInPile: number }) => {
-      // Only allow single card drops to foundation
-      if (item.cardIndexInPile === item.currentPileType.length - 1) { // Assuming cardIndexInPile is the top card
-        makeMove(item.currentPileType, item.currentPileIndex, item.cardIndexInPile, PileType.Foundation, suit);
-      }
+      makeMove(item.currentPileType, item.currentPileIndex, item.cardIndexInPile, PileType.Foundation, suit);
     },
     canDrop: (item: { card: CardType; currentPileType: PileType; currentPileIndex: number | Suit | null; cardIndexInPile: number }) => {
       // Only allow single card drops to foundation
@@ -46,9 +43,7 @@ const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, position, 
   }));
 
   const pileStyle: React.CSSProperties = {
-    position: 'absolute',
-    left: `${position[0]}px`,
-    top: `${position[1]}px`,
+    position: 'relative',
     width: '80px',
     height: '120px',
     border: `2px solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`,
@@ -56,9 +51,9 @@ const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, position, 
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: position[2],
     backgroundColor: isOver && canDrop ? 'rgba(0,255,0,0.1)' : '#333',
     color: '#888',
+    ...style, // Merge passed style prop
   };
 
   const topCard = cards.length > 0 ? cards[cards.length - 1] : null;
@@ -66,7 +61,7 @@ const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, position, 
   return (
     <div ref={drop} style={pileStyle}>
       {topCard ? (
-        <Card card={{ ...topCard, isFaceUp: true }} position={[0, 0, 0]} onClick={onCardClick} />
+        <Card card={{ ...topCard, isFaceUp: true }} position={[0, 0, 1]} onClick={onCardClick} currentPileType={PileType.Foundation} currentPileIndex={suit} cardIndexInPile={cards.length - 1} />
       ) : (
         <span style={{ fontSize: '1.5em' }}>{getSuitSymbol(suit)}</span> // Empty foundation symbol
       )}

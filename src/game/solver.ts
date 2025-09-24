@@ -1,5 +1,5 @@
-import { GameState, Card, PileType, Suit, Move, Rank } from './types';
-import { moveCard, checkWinCondition, canPlaceCardOnTableau, canPlaceCardOnFoundation, getRankValue as getRankValueFromRules, drawFromStock } from './rules';
+import { GameState, Move, PileType, Rank, Suit, Card } from './types';
+import { moveCard, checkWinCondition, canPlaceCardOnTableau, canPlaceCardOnFoundation, drawFromStock } from './rules';
 import { PriorityQueue } from './priorityQueue'; // Assuming a PriorityQueue implementation
 
 // Helper to serialize GameState for memoization
@@ -7,29 +7,11 @@ function serializeGameState(gameState: GameState): string {
   return JSON.stringify({
     stock: gameState.stock.map(c => c.id),
     waste: gameState.waste.map(c => c.id),
-    foundations: Object.values(Suit).map(suit => gameState.foundations[suit].map(c => c.id)),
-    tableaus: gameState.tableaus.map(pile => pile.map(c => c.id + (c.isFaceUp ? 'U' : 'D'))),
+    foundations: Object.values(Suit).map((suit: Suit) => gameState.foundations[suit].map((c: Card) => c.id)),
+    tableaus: gameState.tableaus.map(pile => pile.map((c: Card) => c.id + (c.isFaceUp ? 'U' : 'D'))),
   });
 }
 
-function getRankValue(rank: Rank): number {
-  switch (rank) {
-    case Rank.Ace: return 1;
-    case Rank.Two: return 2;
-    case Rank.Three: return 3;
-    case Rank.Four: return 4;
-    case Rank.Five: return 5;
-    case Rank.Six: return 6;
-    case Rank.Seven: return 7;
-    case Rank.Eight: return 8;
-    case Rank.Nine: return 9;
-    case Rank.Ten: return 10;
-    case Rank.Jack: return 11;
-    case Rank.Queen: return 12;
-    case Rank.King: return 13;
-    default: return 0;
-  }
-}
 
 function sameColorRunPenalty(gameState: GameState): number {
   let penalty = 0;

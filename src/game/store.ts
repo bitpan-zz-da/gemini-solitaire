@@ -1,10 +1,10 @@
 import { create } from 'zustand';
-import { createDeck, shuffleDeck, dealCards, moveCard, drawFromStock, checkWinCondition, autoMoveToFoundation, dealPerfectGame, dealNearlyPerfectGame } from './rules';
-import { GameState, PileType, Card, Suit, Rank, CardBackTheme, Move } from './types';
+import { dealNearlyPerfectGame, moveCard, drawFromStock, autoMoveToFoundation } from './rules';
+import { GameState, PileType, Suit, CardBackTheme } from './types';
 import { solve } from './solver'; // Import the solver
 
 // --- Card Back Themes ---
-const CARD_BACK_THEMES: CardBackTheme[] = [
+export const CARD_BACK_THEMES: CardBackTheme[] = [
   {
     name: 'Classic Blue',
     style: {
@@ -107,7 +107,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   startGame: () => {
     const initialGameState = dealNearlyPerfectGame();
-    set(state => ({
+    set(() => ({
       ...initialGameState,
       tableaus: initialGameState.tableaus.map(pile => [...pile]), // Ensure a fresh copy of tableaus
       score: 0,
@@ -135,10 +135,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   drawCard: () => {
-    set(state => {
-      const updatedGameState = drawFromStock(state);
-      return updatedGameState;
-    });
+    set(drawFromStock);
   },
 
   autoMove: () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card as CardType, Suit, Rank, CardColor } from '../game/types';
+import { Card as CardType, Suit, CardColor, PileType } from '../game/types';
 import { useDrag } from 'react-dnd';
 import { useGameStore } from '../game/store';
 
@@ -7,20 +7,18 @@ interface CardProps {
   card: CardType;
   position: [number, number, number]; // x, y, z for 3D positioning
   onClick?: (card: CardType) => void;
-  // New props for drag-and-drop
-  canDrag?: boolean; // Whether this specific card can be dragged
-  currentPileType: PileType; // e.g., 'tableau', 'waste', 'foundation'
-  currentPileIndex: number | Suit | null; // Index for tableau, suit for foundation
-  cardIndexInPile: number; // Index of the card within its pile
+  canDrag?: boolean;
+  currentPileType: PileType;
+  currentPileIndex: number | Suit | null;
+  cardIndexInPile: number;
 }
 
 const Card: React.FC<CardProps> = ({ card, position, onClick, canDrag = true, currentPileType, currentPileIndex, cardIndexInPile }) => {
   const { cardBackTheme } = useGameStore();
-
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const [{ isDragging }, drag]: [any, any, any] = useDrag(() => ({
     type: 'CARD',
     item: { card, currentPileType, currentPileIndex, cardIndexInPile },
-    canDrag: canDrag && card.isFaceUp, // Only face-up cards can be dragged
+    canDrag: canDrag && card.isFaceUp,
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -46,7 +44,7 @@ const Card: React.FC<CardProps> = ({ card, position, onClick, canDrag = true, cu
     top: `${position[1]}px`,
     zIndex: position[2],
     boxShadow: '2px 2px 5px rgba(0,0,0,0.3)',
-    opacity: isDragging ? 0.5 : 1, // Visual feedback when dragging
+    opacity: isDragging ? 0.5 : 1,
   };
 
   const cardBackStyle: React.CSSProperties = {
@@ -57,7 +55,7 @@ const Card: React.FC<CardProps> = ({ card, position, onClick, canDrag = true, cu
     justifyContent: 'center',
     alignItems: 'center',
     boxShadow: 'inset 0 0 10px rgba(0,0,0,0.5)',
-    ...cardBackTheme.style, // Apply theme style
+    ...cardBackTheme.style,
   };
 
   return (

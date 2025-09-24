@@ -60,7 +60,7 @@ export function dealCards(shuffledDeck: Card[]): GameState {
   });
 
   return {
-    stock: stock.map(card => ({ ...card, isFaceUp: false })), // Ensure stock cards are face down
+    stock: stock.map(card => ({ ...card, isFaceUp: false })),
     waste: [],
     foundations: {
       [Suit.Clubs]: [],
@@ -75,6 +75,8 @@ export function dealCards(shuffledDeck: Card[]): GameState {
     isGameWon: false,
     isGameLost: false,
     lastMove: null,
+    cardBackTheme: { name: 'Classic Blue', style: { backgroundColor: '#004d40' } }, // Default theme
+    solutionPath: null,
   };
 }
 
@@ -103,7 +105,7 @@ export function canPlaceCardOnFoundation(foundationPile: Card[], movingCard: Car
 /**
  * Helper to get numeric value of a rank.
  */
-function getRankValue(rank: Rank): number {
+export function getRankValue(rank: Rank): number {
   switch (rank) {
     case Rank.Ace: return 1;
     case Rank.Two: return 2;
@@ -379,5 +381,7 @@ export function dealPerfectGame(): GameState {
     isGameWon: false,
     isGameLost: false,
     lastMove: null,
+    cardBackTheme: { name: 'Classic Blue', style: { backgroundColor: '#004d40' } }, // Default theme
+    solutionPath: null,
   };
 }

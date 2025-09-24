@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card as CardType, PileType, Rank } from '../game/types';
+import { Card as CardType, PileType, Rank, Suit } from '../game/types';
 import Card from './Card';
 import { useDrop } from 'react-dnd';
 import { useGameStore } from '../game/store';
@@ -7,18 +7,18 @@ import { canPlaceCardOnTableau } from '../game/rules';
 
 interface TableauPileProps {
   cards: CardType[];
-  position: [number, number, number]; // Base position for the pile
   onCardClick: (card: CardType, index: number) => void;
   pileIndex: number;
+  style?: React.CSSProperties;
 }
 
-const TableauPile: React.FC<TableauPileProps> = ({ cards, position, onCardClick, pileIndex }) => {
+const TableauPile: React.FC<TableauPileProps> = ({ cards, onCardClick, pileIndex, style }) => {
   const { makeMove } = useGameStore();
 
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
+  const [{ isOver, canDrop }, drop]: [any, any] = useDrop(() => ({
     accept: 'CARD',
     drop: (item: { card: CardType; currentPileType: PileType; currentPileIndex: number | string | null; cardIndexInPile: number }) => {
-      makeMove(item.currentPileType, item.currentPileIndex, item.cardIndexInPile, PileType.Tableau, pileIndex);
+      makeMove(item.currentPileType, item.currentPileIndex as number | Suit | null, item.cardIndexInPile, PileType.Tableau, pileIndex);
     },
     canDrop: (item: { card: CardType; currentPileType: PileType; currentPileIndex: number | string | null; cardIndexInPile: number }) => {
       const movingCard = item.card;
@@ -38,16 +38,15 @@ const TableauPile: React.FC<TableauPileProps> = ({ cards, position, onCardClick,
   }));
 
   const pileStyle: React.CSSProperties = {
-    position: 'absolute',
-    left: `${position[0]}px`,
-    top: `${position[1]}px`,
+    position: 'relative',
     width: '80px',
     minHeight: '120px', // Allow pile to grow
     border: `2px solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`,
     borderRadius: '8px',
-    zIndex: position[2],
     paddingTop: '5px',
     backgroundColor: isOver && canDrop ? 'rgba(0,255,0,0.1)' : '#333',
+    alignSelf: 'start',
+    ...style, // Merge passed style prop
   };
 
   return (
