@@ -10,9 +10,10 @@ interface TableauPileProps {
   onCardClick: (card: CardType, index: number) => void;
   pileIndex: number;
   style?: React.CSSProperties;
+  cardClassName?: string; // Add cardClassName prop for child Cards
 }
 
-const TableauPile: React.FC<TableauPileProps> = ({ cards, onCardClick, pileIndex, style }) => {
+const TableauPile: React.FC<TableauPileProps> = ({ cards, onCardClick, pileIndex, style, cardClassName }) => {
   const { makeMove } = useGameStore();
 
   const [{ isOver, canDrop }, drop]: [any, any] = useDrop(() => ({
@@ -39,11 +40,11 @@ const TableauPile: React.FC<TableauPileProps> = ({ cards, onCardClick, pileIndex
 
   const pileStyle: React.CSSProperties = {
     position: 'relative',
-    width: '100%', // Fill parent container
-    minHeight: '100%', // Fill parent container
+    width: '6.5em', // Fixed width for the pile
+    minWidth: '6.5em', // Ensure a minimum width for the pile
+    minHeight: '100%', // Ensure enough space for cards
     border: `0.1em solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`, // Responsive border
     borderRadius: '0.5em', // Responsive border-radius
-    paddingTop: '0.3em', // Responsive paddingTop
     backgroundColor: isOver && canDrop ? 'rgba(0,255,0,0.1)' : '#333',
     alignSelf: 'start',
     ...style, // Merge passed style prop
@@ -62,6 +63,7 @@ const TableauPile: React.FC<TableauPileProps> = ({ cards, onCardClick, pileIndex
           currentPileIndex={pileIndex}
           cardIndexInPile={index}
           canDrag={index === cards.length - 1 || card.isFaceUp} // Only top card or face-up cards in sequence can be dragged
+          className={cardClassName}
         />
       ))}
     </div>

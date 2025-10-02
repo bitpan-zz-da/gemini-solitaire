@@ -4,9 +4,10 @@ import { useDrop } from 'react-dnd';
 interface StockPileProps {
   onDraw: () => void;
   style?: React.CSSProperties;
+  className?: string; // Add className prop
 }
 
-const StockPile: React.FC<StockPileProps> = ({ onDraw, style }) => {
+const StockPile: React.FC<StockPileProps> = ({ onDraw, style, className }) => {
   const [{ isOver, canDrop }, drop]: [any, any] = useDrop(() => ({
     accept: 'CARD',
     drop: () => {
@@ -24,8 +25,6 @@ const StockPile: React.FC<StockPileProps> = ({ onDraw, style }) => {
 
   const pileStyle: React.CSSProperties = {
     position: 'relative',
-    width: '100%', // Fill parent container
-    height: '100%', // Fill parent container
     border: `0.1em solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`, // Responsive border
     borderRadius: '0.5em', // Responsive border-radius
     display: 'flex',
@@ -38,7 +37,7 @@ const StockPile: React.FC<StockPileProps> = ({ onDraw, style }) => {
   };
 
   return (
-    <div ref={drop} style={pileStyle} onClick={onDraw}>
+    <div ref={drop} style={pileStyle} className={className} onClick={onDraw}>
       <span style={{ fontSize: '0.45em' }}>🂠</span> {/* Empty stock symbol */}
     </div>
   );

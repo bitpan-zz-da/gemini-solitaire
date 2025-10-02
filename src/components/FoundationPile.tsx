@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card as CardType, Suit, PileType } from '../game/types';
 import Card from './Card';
 import { useDrop } from 'react-dnd';
@@ -10,9 +9,10 @@ interface FoundationPileProps {
   cards: CardType[];
   onCardClick: (card: CardType) => void;
   style?: React.CSSProperties;
+  className?: string; // Add className prop
 }
 
-const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, onCardClick, style }) => {
+const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, onCardClick, style, className }) => {
   const { makeMove } = useGameStore();
 
   const [{ isOver, canDrop }, drop]: [any, any] = useDrop(() => ({
@@ -44,8 +44,6 @@ const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, onCardClic
 
   const pileStyle: React.CSSProperties = {
     position: 'relative',
-    width: '100%', // Fill parent container
-    height: '100%', // Fill parent container
     border: `0.1em solid ${isOver && canDrop ? 'green' : canDrop ? 'yellow' : '#555'}`, // Responsive border
     borderRadius: '0.5em', // Responsive border-radius
     display: 'flex',
@@ -59,9 +57,9 @@ const FoundationPile: React.FC<FoundationPileProps> = ({ suit, cards, onCardClic
   const topCard = cards.length > 0 ? cards[cards.length - 1] : null;
 
   return (
-    <div ref={drop} style={pileStyle}>
+    <div ref={drop} style={pileStyle} className={className}>
       {topCard ? (
-        <Card card={{ ...topCard, isFaceUp: true }} position={[0, 0, 1]} onClick={onCardClick} currentPileType={PileType.Foundation} currentPileIndex={suit} cardIndexInPile={cards.length - 1} />
+        <Card card={{ ...topCard, isFaceUp: true }} position={[0, 0, 1]} onClick={onCardClick} currentPileType={PileType.Foundation} currentPileIndex={suit} cardIndexInPile={cards.length - 1} className={className} />
       ) : (
         <span style={{ fontSize: '1.5em' }}>{getSuitSymbol(suit)}</span> // Empty foundation symbol
       )}

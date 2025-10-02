@@ -11,56 +11,6 @@
   color: white;
 }
 
-.game-board {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr); /* Default for larger screens */
-  grid-template-rows: 1fr 2fr;
-  gap: 1vw;
-  max-width: 900px;
-  width: 95%;
-  aspect-ratio: 1.5 / 1;
-  border: 2px solid #61dafb;
-  border-radius: 10px;
-  background-color: #1a1a1a;
-  margin-top: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-  padding: 1vw;
-}
-
-@media (max-width: 768px) {
-  .game-board {
-    grid-template-columns: repeat(7, minmax(60px, 1fr)); /* Allow smaller columns, but with a min-width */
-    grid-template-rows: auto 1fr; /* Top row auto, tableau row takes remaining space */
-    gap: 0.5vw;
-    width: 98%;
-    padding: 0.5vw;
-    overflow-x: auto; /* Enable horizontal scrolling for the game board itself */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-  }
-
-  /* Ensure card containers don't stretch vertically in the tableau row */
-  .game-board > .card-container {
-    align-self: start;
-  }
-
-  /* Adjust card size for mobile */
-  .game-board .card-container {
-    width: 12vw;
-    height: 18vw;
-  }
-  .game-board .card-container .card-content {
-    font-size: 0.7em;
-  }
-
-  /* Specific adjustments for top row piles */
-  .game-board > .card-container:nth-child(1), /* Stock Pile */
-  .game-board > .card-container:nth-child(2), /* Waste Pile */
-  .game-board > .card-container:nth-child(3), /* Foundation 1 */
-  .game-board > .card-container:nth-child(4) { /* Foundation 2 */
-    grid-column: span 1;
-  }
-}
-
 .game-status {
   margin-top: 20px;
   padding: 15px;
@@ -87,10 +37,21 @@ button {
   cursor: pointer;
   font-size: 1em;
   margin-top: 10px;
+  text-transform: none; /* Override Ionic's default uppercase */
 }
 
 button:hover {
   background-color: #21a1f1;
+}
+
+ion-button {
+  --text-transform: none; /* Override Ionic's default uppercase for IonButton */
+  text-transform: none; /* Fallback for direct button text */
+  min-width: 8em; /* Ensure enough width for text */
+}
+
+ion-button::part(native) {
+  text-transform: none; /* Target the internal native button part */
 }
 
 /* Existing styles */
@@ -111,7 +72,7 @@ button:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop_shadow(0 0 2em #61dafbaa);
 }
 
 @keyframes logo-spin {
@@ -135,4 +96,110 @@ button:hover {
 
 .read-the-docs {
   color: #888;
+}
+
+/* New Card Sizing Classes */
+.web-card {
+  width: 6.5em;
+  height: 9.75em;
+  font-size: 1em; /* Base font size for web cards */
+}
+
+.mobile-card {
+  width: 80px; /* Fixed width for mobile cards */
+  height: 120px; /* Fixed height for mobile cards */
+  font-size: 0.7em; /* Base font size for mobile cards */
+}
+
+/* Pile Container Styles for Web */
+.web-pile-container {
+  position: relative;
+  width: 6.5em; /* Match web-card width */
+  flex-shrink: 0;
+}
+
+/* Pile Container Styles for Mobile */
+.mobile-pile-container {
+  position: relative;
+  margin: 0.5vw;
+  flex-shrink: 0;
+}
+
+/* Tableau Piles specific styles for mobile to enable horizontal scrolling */
+.mobile-tableau-row {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  width: 100%;
+  padding-bottom: 10px; /* To ensure scrollbar is visible */
+}
+
+.mobile-tableau-pile {
+  min-width: 90px; /* Slightly larger than card width */
+  margin-right: 5px; /* Spacing between piles */
+}
+
+.theme-button-style {
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 10px; /* Adjust as needed for alignment */
+  display: flex; /* To align label and select horizontally */
+  align-items: center;
+  gap: 5px; /* Space between label and select */
+}
+
+.theme-button-style label {
+  color: #282c34; /* Text color for the label */
+  font-weight: bold;
+}
+
+.game-board-web-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  width: 100%;
+  max-width: 70em; /* Adjust as needed */
+  margin: 0 auto; /* Center the container */
+}
+
+.game-board-web-top-row {
+  display: grid;
+  grid-template-columns: repeat(7, 6.5em); /* 7 columns, each matching card width */
+  gap: 1em;
+  width: 100%;
+  justify-content: space-between; /* Distribute items with space between */
+}
+
+.game-board-web-top-left {
+  grid-column: 1 / span 2; /* Stock and Waste take first two columns */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+
+.game-board-web-top-right {
+  grid-column: 4 / span 4; /* Foundations and Themes take last four columns */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5em;
+}
+
+.game-board-web-tableau-row {
+  display: grid;
+  grid-template-columns: repeat(7, 6.5em); /* 7 columns, each matching card width */
+  gap: 1em;
+  width: 100%;
+  justify-content: space-between; /* Distribute items with space between */
+}
+
+.scale-75 {
+  font-size: 75%;
 }

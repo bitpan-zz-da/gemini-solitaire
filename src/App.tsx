@@ -1,190 +1,43 @@
-import { useEffect } from 'react'
-import './App.css'
-import { useGameStore } from './game/store'
-import { Card as CardType, PileType, Suit, Rank } from './game/types'
-import { canPlaceCardOnFoundation, canPlaceCardOnTableau } from './game/rules'
-import Card from './components/Card'
+import { Redirect, Route } from 'react-router-dom';
+import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonReactRouter } from '@ionic/react-router';
+import GamePage from './pages/GamePage';
 
-import StockPile from './components/StockPile';
-import FoundationPile from './components/FoundationPile';
-import TableauPile from './components/TableauPile'
-import Themes from './components/Themes'
+/* Core CSS required for Ionic components to work properly */
+import '@ionic/react/css/core.css';
 
-function App() {
-  const { startGame, stock, waste, tableaus, foundations, drawCard, solveGame } = useGameStore();
+/* Basic CSS for apps built with Ionic */
+import '@ionic/react/css/normalize.css';
+import '@ionic/react/css/structure.css';
+import '@ionic/react/css/typography.css';
 
-  useEffect(() => {
-    startGame();
-  }, [startGame]);
-  const handleCardClick = (card: CardType, pileType: PileType, pileIndex: number | Suit | null, cardIndex?: number) => {
-    const currentGameState = useGameStore.getState();
-    const { makeMove, tableaus, waste, foundations } = currentGameState;
+/* Optional CSS utils that can be commented out */
+import '@ionic/react/css/padding.css';
+import '@ionic/react/css/float-elements.css';
+import '@ionic/react/css/text-alignment.css';
+import '@ionic/react/css/text-transformation.css';
+import '@ionic/react/css/flex-utils.css';
+import '@ionic/react/css/display.css';
 
-    let moved = false;
+/* Theme variables */
+import './theme/variables.css';
+import './App.css';
 
-    // Logic for clicking a card in a Tableau Pile
-    if (pileType === PileType.Tableau && typeof pileIndex === 'number' && cardIndex !== undefined) {
-      const clickedPile = tableaus[pileIndex];
-      // Ensure the clicked card is face-up and is the top-most card of a draggable stack
-      if (!card.isFaceUp || cardIndex < 0 || cardIndex >= clickedPile.length) return; // Should not happen if clicked card is face up
+setupIonicReact();
 
-      // Determine the stack of cards to move (from clickedCardIndex to end of pile)
-      const cardsToAttemptMove = clickedPile.slice(cardIndex);
-      if (cardsToAttemptMove.length === 0) return;
-      const movingCardForValidation = cardsToAttemptMove[0]; // The card that will be validated against the target
-
-      // Try moving to foundations first (only single cards can go to foundation)
-      if (cardsToAttemptMove.length === 1) {
-        for (const suit of Object.values(Suit)) {
-          const targetFoundation = foundations[suit];
-          if (canPlaceCardOnFoundation(targetFoundation, movingCardForValidation)) {
-            if (makeMove(pileType, pileIndex, cardIndex, PileType.Foundation, suit)) {
-              moved = true;
-              break;
-            }
-          }
-        }
-      }
-
-      if (!moved) {
-        // If not moved to foundation, try moving to another tableau pile
-        for (let i = 0; i < tableaus.length; i++) {
-          if (i === pileIndex) continue; // Don't try to move to the same pile
-
-          const targetTableau = tableaus[i];
-          if (targetTableau.length === 0) {
-            if (movingCardForValidation.rank === Rank.King) {
-              if (makeMove(pileType, pileIndex, cardIndex, PileType.Tableau, i)) {
-                moved = true;
-                break;
-              }
-            }
-          } else {
-            const targetTopCard = targetTableau[targetTableau.length - 1];
-            if (canPlaceCardOnTableau(targetTopCard, movingCardForValidation)) {
-              if (makeMove(pileType, pileIndex, cardIndex, PileType.Tableau, i)) {
-                moved = true;
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-    // Logic for clicking a card in the Waste Pile
-    else if (pileType === PileType.Waste && cardIndex === waste.length - 1) {
-      const movingCardForValidation = card; // Top card of waste
-      let moved = false;
-
-      // Try moving to foundations first
-      for (const suit of Object.values(Suit)) {
-        const targetFoundation = foundations[suit];
-        if (canPlaceCardOnFoundation(targetFoundation, movingCardForValidation)) {
-          if (makeMove(pileType, null, cardIndex, PileType.Foundation, suit)) {
-            moved = true;
-            break;
-          }
-        }
-      }
-
-      if (!moved) {
-        // If not moved to foundation, try moving to another tableau pile
-        for (let i = 0; i < tableaus.length; i++) {
-          const targetTableau = tableaus[i];
-          if (targetTableau.length === 0) {
-            if (movingCardForValidation.rank === Rank.King) {
-              if (makeMove(pileType, null, cardIndex, PileType.Tableau, i)) {
-                moved = true;
-                break;
-              }
-            }
-          } else {
-            const targetTopCard = targetTableau[targetTableau.length - 1];
-            if (canPlaceCardOnTableau(targetTopCard, movingCardForValidation)) {
-              if (makeMove(pileType, null, cardIndex, PileType.Tableau, i)) {
-                moved = true;
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-  };
-
-  return (
-    <div className="App">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '0 50px' }}>
-        <h1>Jyeshta Solitaire</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <div style={{ display: 'flex', gap: '15px', color: 'white', fontSize: '0.45em' }}>
-            <p>Stock: {stock.length} cards</p>
-            <p>Waste: {waste.length} cards</p>
-            <p>Moves: {useGameStore.getState().moves}</p>
-          </div>
-          <Themes />
-        </div>
-      </div>
-
-      {tableaus.length > 0 ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%', padding: '0 50px' }}>
-          <button onClick={startGame} style={{ padding: '6px 12px', fontSize: '0.8em', marginBottom: '10px' }}>New Game</button>
-          <div className="game-board">
-          {/* Stock Pile */}
-          <div className="card-container" style={{ gridColumn: '1 / 2', gridRow: '1 / 2' }}>
-            <StockPile onDraw={drawCard} />
-          </div>
-
-          {/* Waste Pile */}
-          {waste.length > 0 && (
-            <div className="card-container" style={{ gridColumn: '2 / 3', gridRow: '1 / 2', position: 'relative' }}>
-              <Card
-                card={{ ...waste[waste.length - 1], isFaceUp: true }}
-                position={[0, 0, 1]} // Relative position within its grid cell
-                onClick={(card) => handleCardClick(card, PileType.Waste, null, waste.length - 1)}
-                currentPileType={PileType.Waste}
-                currentPileIndex={null}
-                cardIndexInPile={waste.length - 1}
-              />
-            </div>
-          )}
-
-          {/* Foundation Piles */}
-          {Object.values(Suit).map((suit, index) => {
-            const foundationCards = foundations[suit];
-            return (
-              <div className="card-container" style={{ gridColumn: `${4 + index} / ${5 + index}`, gridRow: '1 / 2' }}>
-                <FoundationPile
-                  key={suit}
-                  suit={suit}
-                  cards={foundationCards}
-                  onCardClick={(card) => handleCardClick(card, PileType.Foundation, suit, foundationCards.length - 1)}
-                />
-              </div>
-            );
-          })}
-
-          {/* Tableau Piles */}
-                  {tableaus.map((pile, index) => {
-                    return (
-                      <div className="card-container" style={{ gridColumn: `${index + 1} / ${index + 2}`, gridRow: '2 / 3' }}>
-                        <TableauPile
-                          key={index}
-                          cards={pile}
-                          onCardClick={(card, cardIndex) => handleCardClick(card, PileType.Tableau, index, cardIndex)}
-                          pileIndex={index}
-                        />
-                      </div>
-                    );
-                  })}        
-          </div>
-          <button onClick={solveGame} style={{ marginTop: '10px', padding: '8px 15px', fontSize: '0.9em' }}>Solve It</button>
-        </div>
-      ) : (
-        <p>Loading game...</p>
-      )}
-    </div>
-  );
-}
+const App: React.FC = () => (
+  <IonApp>
+    <IonReactRouter>
+      <IonRouterOutlet>
+        <Route exact path="/game">
+          <GamePage />
+        </Route>
+        <Route exact path="/">
+          <Redirect to="/game" />
+        </Route>
+      </IonRouterOutlet>
+    </IonReactRouter>
+  </IonApp>
+);
 
 export default App;

@@ -2,7 +2,11 @@ import React from 'react';
 import { useGameStore } from '../game/store';
 import { CARD_BACK_THEMES } from '../game/store';
 
-const Themes: React.FC = () => {
+interface ThemesProps {
+  className?: string;
+}
+
+const Themes: React.FC<ThemesProps> = ({ className }) => {
   const { cardBackTheme, setCardBackTheme } = useGameStore();
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -14,15 +18,15 @@ const Themes: React.FC = () => {
   };
 
   return (
-    <div style={{ margin: '0 10px' }}>
-      <label htmlFor="theme-select" style={{ marginRight: '5px', color: 'white', fontSize: '0.8em' }}>Themes:</label>
+    <div className={className}>
+      <label htmlFor="theme-select">Themes:</label>
       <select id="theme-select" value={cardBackTheme.name} onChange={handleChange}
         style={{
           padding: '4px 8px',
           borderRadius: '5px',
           border: '1px solid #61dafb',
           backgroundColor: '#282c34',
-          color: 'white',
+          color: '#61dafb',
           cursor: 'pointer',
           fontSize: '0.8em',
         }}>
